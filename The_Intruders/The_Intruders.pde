@@ -44,6 +44,7 @@ int estadoJogo = 0;
 // 1 JOGO
 // 2 RECORDES
 // 3 GAME OVER
+// 4 VITORIA
 
 // ===================================================
 // JOGO
@@ -118,7 +119,6 @@ void setup() {
 // ===================================================
 
 void draw() {
-
   if (estadoJogo == 0) {
     
     musicaJogo.stop();
@@ -137,7 +137,13 @@ void draw() {
   } else if (estadoJogo == 3) {
 
     desenharGameOver();
+  } else if (estadoJogo == 4) {
+    
+    delay(2500);
+    estadoJogo = 0;
+    
   }
+  
 }
 
 
@@ -1064,16 +1070,29 @@ void telaVitoria() {
   textSize(30);
 
   text("Boss derrotado!", width/2, height/2 + 30);
+  
+  if (frameCount % 60 < 30) {
+
+    fill(255);
+
+    textSize(24);
+
+    text(
+      "PRESSIONE ESPAÇO PARA VOLTAR AO MENU",
+      width/2,
+      height/2 + 180
+    );
+  }
 
   delay(1000);
   
 
-  estadoJogo = 0;
+  estadoJogo = 4;
   
   // Para as outra musicas e inicia a de menu
   musicaGameOver.stop();
   musicaJogo.stop();
-  musicaMenu.play();
+  musicaMenu.loop();
 }
 
 // ===================================================
