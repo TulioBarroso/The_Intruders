@@ -49,6 +49,17 @@ int estadoJogo = 0;
 // JOGO
 // ===================================================
 
+// importar bibliotecas 
+import processing.sound.*;
+
+// declarar objetos e variáveis
+SoundFile tiro;
+SoundFile musicaMenu;
+SoundFile musicaJogo;
+SoundFile musicaGameOver;
+SoundFile musicaDerrotouBoss;
+
+
 int pontos = 0;
 int recorde = 0;
 
@@ -61,7 +72,14 @@ PFont fonte;
 
 void setup() {
 
-  size(700, 900);
+  size(700, 700);
+  
+  // carregar áudios
+  tiro = new SoundFile(this,"disparo-laser-suave.mp3");
+  musicaMenu = new SoundFile(this,"musica-menu.mp3");
+  musicaJogo = new SoundFile(this,"invasao-alien.mp3");
+  musicaGameOver = new SoundFile(this,"game-over.mp3");
+  musicaDerrotouBoss = new SoundFile(this,"musica-derrotou-boss.mp3");
 
   smooth(8);
 
@@ -102,12 +120,15 @@ void setup() {
 void draw() {
 
   if (estadoJogo == 0) {
-
+    
+    musicaJogo.stop();
+    musicaGameOver.stop();
     desenharMenu();
 
   } else if (estadoJogo == 1) {
-
+    
     rodarJogo();
+    
 
   } else if (estadoJogo == 2) {
 
@@ -119,11 +140,13 @@ void draw() {
   }
 }
 
+
 // ===================================================
 // MENU
 // ===================================================
 
 void desenharMenu() {
+  
 
   background(10, 15, 30);
 
@@ -153,6 +176,7 @@ void desenharMenu() {
 
   text("A/D ou SETAS para mover", width/2, 620);
   text("ESPAÇO para atirar", width/2, 650);
+  
 }
 
 // ===================================================
@@ -387,7 +411,10 @@ void rodarJogo() {
 
             salvarRecorde();
           }
-
+          
+          // musica de derrotou boss
+          musicaJogo.stop(); 
+          musicaDerrotouBoss.play();
           telaVitoria();
 
           return;
@@ -695,6 +722,7 @@ class TiroBoss {
   }
 
   boolean finalizado() {
+    
 
     return explodiu && tempo > 14;
   }
@@ -872,13 +900,17 @@ void keyPressed() {
   if (estadoJogo == 1) {
 
     if (key == ' ') {
-
+      
+      
       balas.add(
         new Bala(
           jogador.x,
           jogador.y - 80
         )
+        
       );
+      // audio tiro
+      tiro.play();
     }
   }
 
@@ -924,6 +956,7 @@ void mousePressed() {
       ) {
 
       iniciarJogo();
+      
     }
 
     if (
@@ -983,6 +1016,11 @@ void iniciarJogo() {
   jogador = new Jogador();
 
   estadoJogo = 1;
+  
+  // Para as outras musica e inicia a musica do jogo
+  musicaGameOver.stop();
+  musicaMenu.stop();
+  musicaJogo.loop();
 }
 
 // ===================================================
@@ -999,6 +1037,10 @@ void gameOver() {
   }
 
   estadoJogo = 3;
+  // Para as outras musicas e inicia a do game over
+  musicaJogo.stop();
+  musicaMenu.stop();
+  musicaGameOver.loop();
 }
 
 // ===================================================
@@ -1023,9 +1065,15 @@ void telaVitoria() {
 
   text("Boss derrotado!", width/2, height/2 + 30);
 
-  delay(3200);
+  delay(1000);
+  
 
   estadoJogo = 0;
+  
+  // Para as outra musicas e inicia a de menu
+  musicaGameOver.stop();
+  musicaJogo.stop();
+  musicaMenu.play();
 }
 
 // ===================================================
